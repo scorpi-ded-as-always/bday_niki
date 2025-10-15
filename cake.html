@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a Wish...</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #fff8f0;
+            color: #444;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 95vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        #cake-image {
+            max-width: 250px;
+            cursor: grab;
+            user-select: none;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        #cake-image:active {
+            cursor: grabbing;
+        }
+        #birthday-message {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4.5em;
+            color: #e63946;
+            margin: 20px 0;
+            transform: scale(0);
+            transition: transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        #birthday-message.show {
+            transform: scale(1);
+        }
+        #next-page-button {
+            background-color: #e63946;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.3s;
+            transform: scale(0);
+        }
+        #next-page-button.show {
+            transform: scale(1);
+        }
+        #next-page-button:hover {
+            background-color: #f45b69;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Make a wish and swipe the cake!</h2>
+        <img id="cake-image" src="cake-whole.png" alt="Whole Birthday Cake">
+        
+        <h1 id="birthday-message">Happy Birthday Niki!</h1>
+        
+        <a href="memories.html" id="next-page-button">Click Here for Your Surprise...</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cakeImage = document.getElementById('cake-image');
+            const birthdayMessage = document.getElementById('birthday-message');
+            const nextPageButton = document.getElementById('next-page-button');
+            let isCakeSliced = false;
+
+            // THIS LINE IS NOW USING YOUR LOCAL IMAGE
+            const slicedCakeURL = 'cake-sliced.png';
+
+            function sliceTheCake() {
+                if (isCakeSliced) return;
+                isCakeSliced = true;
+
+                cakeImage.src = slicedCakeURL;
+                birthdayMessage.classList.add('show');
+                nextPageButton.classList.add('show');
+                
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            }
+
+            let isDragging = false;
+            let startX;
+            const startDrag = (e) => {
+                isDragging = true;
+                startX = e.pageX || e.touches[0].pageX;
+                cakeImage.style.cursor = 'grabbing';
+            };
+            const endDrag = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                cakeImage.style.cursor = 'grab';
+                const endX = e.pageX || e.changedTouches[0].pageX;
+                if (Math.abs(startX - endX) > 50) {
+                    sliceTheCake();
+                }
+            };
+            
+            cakeImage.addEventListener('mousedown', startDrag);
+            cakeImage.addEventListener('mouseup', endDrag);
+            cakeImage.addEventListener('mouseleave', () => isDragging = false);
+            cakeImage.addEventListener('touchstart', startDrag);
+            cakeImage.addEventListener('touchend', endDrag);
+        });
+    </script>
+</body>
+</html>
